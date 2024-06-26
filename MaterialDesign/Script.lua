@@ -46,11 +46,22 @@ function Initialize()
     DiskInfoTable.UsageBarSize = 0
     DiskInfoTable.TempBarSize = 0
     DiskInfoTable.FreeBarSize = 0
+
+    -- 初始化 函数标记
+    InitializeTableValueFunFlag = false
 end
 
 function Update()
-    -- 初始化（生命周期内只执行一次）
-    if UpTime == 0 then
+    -- 初始化值（生命周期内只执行一次）
+    ChangeValue(SKIN:GetMeasure("MeasureMemoryUsedValueRaw"):GetValue())
+
+    -- 执行主函数
+    Main(InitializeTableValueFunFlag)
+end
+
+-- 检测值发生变化时，执行初始化对象值函数
+function ChangeValue(newVal)
+    if newVal ~= 0 and not InitializeTableValueFunFlag then
         -- 获取CPU温度仪表盘尺寸
         CpuInfoTable.CpuTempBarSize = SKIN:GetMeasure("MeterCpuTempBarShape1H"):GetValue()
         -- 获取CPU使用率仪表盘尺寸
@@ -90,161 +101,172 @@ function Update()
         DiskInfoTable.TempBarSize = SKIN:GetMeasure("MeterDiskTempBarShape1W"):GetValue()
         -- 获取硬盘可用空间仪表盘尺寸
         DiskInfoTable.FreeBarSize = SKIN:GetMeasure("MeterDiskFreeBarShape1W"):GetValue()
+        InitializeTableValueFunFlag = true
     end
+end
 
-    -- CPU 温度仪表盘
-    SKIN:Bang("!SetOption", "MeterCpuTempBar", "Shape2",
-        "Rectangle [MeterCpuTempBarShape2X:],[MeterCpuTempBarShape2Y:],[MeterCpuTempBarShape2W:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureCpuTempValueRaw"):GetValue(), CpuInfoTable.CpuTempCap,
-            CpuInfoTable.CpuTempBarSize,
-            true) .. " | Fill Color 219,236,248,255 | StrokeWidth 0")
+-- 主函数
+-- 当 ChangeValue 函数执行完成后，才允许执行主函数
+function Main(Flag)
+    if Flag then
+        -- CPU 温度仪表盘
+        SKIN:Bang("!SetOption", "MeterCpuTempBar", "Shape2",
+            "Rectangle [MeterCpuTempBarShape2X:],[MeterCpuTempBarShape2Y:],[MeterCpuTempBarShape2W:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureCpuTempValueRaw"):GetValue(), CpuInfoTable.CpuTempCap,
+                CpuInfoTable.CpuTempBarSize,
+                true) .. " | Fill Color 219,236,248,255 | StrokeWidth 0")
 
-    -- CPU 温度添加导零
-    SKIN:Bang("!SetVariable", "CpuTemp", AddLeadingZeros(SKIN:GetMeasure("MeasureCpuTempValueRaw"):GetValue(), 2, 0))
+        -- CPU 温度添加导零
+        SKIN:Bang("!SetVariable", "CpuTemp", AddLeadingZeros(SKIN:GetMeasure("MeasureCpuTempValueRaw"):GetValue(), 2, 0))
 
-    -- CPU 温度 当前最小值 和 当前最大值
-    CalcMinMax("MeasureCpuTempValueRaw", "CpuTempMin", "CpuTempMax", CpuInfoTable, "MinTempCol", "MaxTempCol")
+        -- CPU 温度 当前最小值 和 当前最大值
+        CalcMinMax("MeasureCpuTempValueRaw", "CpuTempMin", "CpuTempMax", CpuInfoTable, "MinTempCol", "MaxTempCol")
 
-    -- CPU 使用率添加导零
-    SKIN:Bang("!SetVariable", "CpuUsage", AddLeadingZeros(SKIN:GetMeasure("MeasureCpuUsageValueRaw"):GetValue(), 2, 0))
+        -- CPU 使用率添加导零
+        SKIN:Bang("!SetVariable", "CpuUsage",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureCpuUsageValueRaw"):GetValue(), 2, 0))
 
-    -- CPU 功率添加导零
-    SKIN:Bang("!SetVariable", "CpuPower", AddLeadingZeros(SKIN:GetMeasure("MeasureCpuPowerValueRaw"):GetValue(), 2, 2))
+        -- CPU 功率添加导零
+        SKIN:Bang("!SetVariable", "CpuPower",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureCpuPowerValueRaw"):GetValue(), 2, 2))
 
-    -- CPU 使用率直方图
-    ControlHist("MeasureCpuUsageValueRaw", "MeterCpuUsageHist", CpuInfoTable, "CpuUsageHistData",
-        CpuInfoTable.CpuUsageHistBarSize2)
+        -- CPU 使用率直方图
+        ControlHist("MeasureCpuUsageValueRaw", "MeterCpuUsageHist", CpuInfoTable, "CpuUsageHistData",
+            CpuInfoTable.CpuUsageHistBarSize2)
 
-    -- CPU 使用率仪表盘
-    SKIN:Bang("!SetOption", "MeterCpuUsageBar", "Shape2",
-        "Rectangle [MeterCpuUsageBarShape2X:],[MeterCpuUsageBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureCpuUsageValueRaw"):GetValue(), 100, CpuInfoTable.CpuUsageBarSize, false) ..
-        ",[MeterCpuUsageBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+        -- CPU 使用率仪表盘
+        SKIN:Bang("!SetOption", "MeterCpuUsageBar", "Shape2",
+            "Rectangle [MeterCpuUsageBarShape2X:],[MeterCpuUsageBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureCpuUsageValueRaw"):GetValue(), 100, CpuInfoTable.CpuUsageBarSize, false) ..
+            ",[MeterCpuUsageBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
 
-    -- CPU 风扇转速仪表盘
-    SKIN:Bang("!SetOption", "MeterCpuFanBar", "Shape2",
-        "Rectangle [MeterCpuFanBarShape2X:],[MeterCpuFanBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureCpuFanValueRaw"):GetValue(), CpuInfoTable.CpuFanRpmCap,
-            CpuInfoTable.CpuFanBarSize,
-            false) ..
-        ",[MeterCpuFanBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+        -- CPU 风扇转速仪表盘
+        SKIN:Bang("!SetOption", "MeterCpuFanBar", "Shape2",
+            "Rectangle [MeterCpuFanBarShape2X:],[MeterCpuFanBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureCpuFanValueRaw"):GetValue(), CpuInfoTable.CpuFanRpmCap,
+                CpuInfoTable.CpuFanBarSize,
+                false) ..
+            ",[MeterCpuFanBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
 
-    -- CPU 功率仪表盘
-    SKIN:Bang("!SetOption", "MeterCpuPowerBar", "Shape2",
-        "Rectangle [MeterCpuPowerBarShape2X:],[MeterCpuPowerBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureCpuPowerValueRaw"):GetValue(), CpuInfoTable.CpuPowerCap,
-            CpuInfoTable.CpuPowerBarSize,
-            false) ..
-        ",[MeterCpuPowerBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+        -- CPU 功率仪表盘
+        SKIN:Bang("!SetOption", "MeterCpuPowerBar", "Shape2",
+            "Rectangle [MeterCpuPowerBarShape2X:],[MeterCpuPowerBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureCpuPowerValueRaw"):GetValue(), CpuInfoTable.CpuPowerCap,
+                CpuInfoTable.CpuPowerBarSize,
+                false) ..
+            ",[MeterCpuPowerBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
 
-    -- GPU 温度仪表盘
-    SKIN:Bang("!SetOption", "MeterGpuTempBar", "Shape2",
-        "Rectangle [MeterGpuTempBarShape2X:],[MeterGpuTempBarShape2Y:],[MeterGpuTempBarShape2W:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureGpuTempValueRaw"):GetValue(), GpuInfoTable.GpuTempCap,
-            GpuInfoTable.GpuTempBarSize,
-            true) .. " | Fill Color 219,236,248,255 | StrokeWidth 0")
+        -- GPU 温度仪表盘
+        SKIN:Bang("!SetOption", "MeterGpuTempBar", "Shape2",
+            "Rectangle [MeterGpuTempBarShape2X:],[MeterGpuTempBarShape2Y:],[MeterGpuTempBarShape2W:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureGpuTempValueRaw"):GetValue(), GpuInfoTable.GpuTempCap,
+                GpuInfoTable.GpuTempBarSize,
+                true) .. " | Fill Color 219,236,248,255 | StrokeWidth 0")
 
-    -- GPU 温度添加导零
-    SKIN:Bang("!SetVariable", "GpuTemp", AddLeadingZeros(SKIN:GetMeasure("MeasureGpuTempValueRaw"):GetValue(), 2, 0))
+        -- GPU 温度添加导零
+        SKIN:Bang("!SetVariable", "GpuTemp", AddLeadingZeros(SKIN:GetMeasure("MeasureGpuTempValueRaw"):GetValue(), 2, 0))
 
-    -- GPU 温度 当前最小值 和 当前最大值
-    CalcMinMax("MeasureGpuTempValueRaw", "GpuTempMin", "GpuTempMax", GpuInfoTable, "MinTempCol", "MaxTempCol")
+        -- GPU 温度 当前最小值 和 当前最大值
+        CalcMinMax("MeasureGpuTempValueRaw", "GpuTempMin", "GpuTempMax", GpuInfoTable, "MinTempCol", "MaxTempCol")
 
-    -- GPU 使用率添加导零
-    SKIN:Bang("!SetVariable", "GpuUsage", AddLeadingZeros(SKIN:GetMeasure("MeasureGpuUsageValueRaw"):GetValue(), 2, 0))
+        -- GPU 使用率添加导零
+        SKIN:Bang("!SetVariable", "GpuUsage",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureGpuUsageValueRaw"):GetValue(), 2, 0))
 
-    -- GPU 功率添加导零
-    SKIN:Bang("!SetVariable", "GpuPower", AddLeadingZeros(SKIN:GetMeasure("MeasureGpuPowerValueRaw"):GetValue(), 2, 2))
+        -- GPU 功率添加导零
+        SKIN:Bang("!SetVariable", "GpuPower",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureGpuPowerValueRaw"):GetValue(), 2, 2))
 
-    -- GPU 使用率直方图
-    ControlHist("MeasureGpuUsageValueRaw", "MeterGpuUsageHist", GpuInfoTable, "GpuUsageHistData",
-        GpuInfoTable.GpuUsageHistBarSize2)
+        -- GPU 使用率直方图
+        ControlHist("MeasureGpuUsageValueRaw", "MeterGpuUsageHist", GpuInfoTable, "GpuUsageHistData",
+            GpuInfoTable.GpuUsageHistBarSize2)
 
-    -- GPU 使用率仪表盘
-    SKIN:Bang("!SetOption", "MeterGpuUsageBar", "Shape2",
-        "Rectangle [MeterGpuUsageBarShape2X:],[MeterGpuUsageBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureGpuUsageValueRaw"):GetValue(), 100, GpuInfoTable.GpuUsageBarSize, false) ..
-        ",[MeterGpuUsageBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+        -- GPU 使用率仪表盘
+        SKIN:Bang("!SetOption", "MeterGpuUsageBar", "Shape2",
+            "Rectangle [MeterGpuUsageBarShape2X:],[MeterGpuUsageBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureGpuUsageValueRaw"):GetValue(), 100, GpuInfoTable.GpuUsageBarSize, false) ..
+            ",[MeterGpuUsageBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
 
-    -- GPU 风扇转速仪表盘
-    SKIN:Bang("!SetOption", "MeterGpuFanBar", "Shape2",
-        "Rectangle [MeterGpuFanBarShape2X:],[MeterGpuFanBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureGpuFanValueRaw"):GetValue(), GpuInfoTable.GpuFanRpmCap,
-            GpuInfoTable.GpuFanBarSize,
-            false) ..
-        ",[MeterGpuFanBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+        -- GPU 风扇转速仪表盘
+        SKIN:Bang("!SetOption", "MeterGpuFanBar", "Shape2",
+            "Rectangle [MeterGpuFanBarShape2X:],[MeterGpuFanBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureGpuFanValueRaw"):GetValue(), GpuInfoTable.GpuFanRpmCap,
+                GpuInfoTable.GpuFanBarSize,
+                false) ..
+            ",[MeterGpuFanBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
 
-    -- GPU 功率仪表盘
-    SKIN:Bang("!SetOption", "MeterGpuPowerBar", "Shape2",
-        "Rectangle [MeterGpuPowerBarShape2X:],[MeterGpuPowerBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureGpuPowerValueRaw"):GetValue(), GpuInfoTable.GpuPowerCap,
-            GpuInfoTable.GpuPowerBarSize,
-            false) ..
-        ",[MeterGpuPowerBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+        -- GPU 功率仪表盘
+        SKIN:Bang("!SetOption", "MeterGpuPowerBar", "Shape2",
+            "Rectangle [MeterGpuPowerBarShape2X:],[MeterGpuPowerBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureGpuPowerValueRaw"):GetValue(), GpuInfoTable.GpuPowerCap,
+                GpuInfoTable.GpuPowerBarSize,
+                false) ..
+            ",[MeterGpuPowerBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
 
-    -- RAM 使用率仪表盘
-    SKIN:Bang("!SetOption", "MeterRamLoadBar", "Shape2",
-        "Rectangle [MeterRamLoadBarShape2X:],[MeterRamLoadBarShape2Y:],[MeterRamLoadBarShape2W:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureMemoryLoadValueRaw"):GetValue(), 100, RamInfoTable.RamLoadBarSize,
-            true) .. " | Fill Color 219,236,248,255 | StrokeWidth 0")
+        -- RAM 使用率仪表盘
+        SKIN:Bang("!SetOption", "MeterRamLoadBar", "Shape2",
+            "Rectangle [MeterRamLoadBarShape2X:],[MeterRamLoadBarShape2Y:],[MeterRamLoadBarShape2W:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureMemoryLoadValueRaw"):GetValue(), 100, RamInfoTable.RamLoadBarSize,
+                true) .. " | Fill Color 219,236,248,255 | StrokeWidth 0")
 
-    -- RAM 使用率添加导零
-    SKIN:Bang("!SetVariable", "RamLoad", AddLeadingZeros(SKIN:GetMeasure("MeasureMemoryLoadValueRaw"):GetValue(), 2, 0))
+        -- RAM 使用率添加导零
+        SKIN:Bang("!SetVariable", "RamLoad",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureMemoryLoadValueRaw"):GetValue(), 2, 0))
 
-    -- RAM 已用空间和可用空间
-    SKIN:Bang("!SetVariable", "RamUsed",
-        string.format("%.1f", SKIN:GetMeasure("MeasureMemoryUsedValueRaw"):GetValue() / 1024))
-    SKIN:Bang("!SetVariable", "RamAvailable",
-        string.format("%.1f", SKIN:GetMeasure("MeasureMemoryAvailableValueRaw"):GetValue() / 1024))
+        -- RAM 已用空间和可用空间
+        SKIN:Bang("!SetVariable", "RamUsed",
+            string.format("%.1f", SKIN:GetMeasure("MeasureMemoryUsedValueRaw"):GetValue() / 1024))
+        SKIN:Bang("!SetVariable", "RamAvailable",
+            string.format("%.1f", SKIN:GetMeasure("MeasureMemoryAvailableValueRaw"):GetValue() / 1024))
 
-    -- 计算硬盘空间（默认每60秒更新一次）
-    if os.time() > (UpTime + DiskUpTime) then
-        if CpuInfoTable.CpuTempBarSize ~= 0 or CpuInfoTable.CpuTempBarSize ~= nil then
+        -- 计算硬盘空间（默认每60秒更新一次）
+        if os.time() > (UpTime + DiskUpTime) then
             UpTime = os.time()
+            DiskInfoTable.Used = CalcDiskUsed(DiskInfoTable.Drive)
+            DiskInfoTable.Free = CalcDiskFree(DiskInfoTable.Drive)
+            DiskInfoTable.Usage = CheckNaN(CalcPercent(DiskInfoTable.Capacity, DiskInfoTable.Used))
+            -- 硬盘使用率
+            SKIN:Bang("!SetVariable", "DiskUsage", DiskInfoTable.Usage)
+            -- 硬盘已用空间
+            SKIN:Bang("!SetVariable", "DiskUsed", UnitConvert(DiskInfoTable.Used))
+            -- 硬盘可用空间
+            SKIN:Bang("!SetVariable", "DiskFree", UnitConvert(DiskInfoTable.Free))
+            -- 硬盘使用率仪表盘
+            SKIN:Bang("!SetOption", "MeterDiskUsageBar", "Shape2",
+                "Rectangle [MeterDiskUsageBarShape2X:],[MeterDiskUsageBarShape2Y:]," ..
+                CalcBarSize(DiskInfoTable.Usage, 100, DiskInfoTable.UsageBarSize,
+                    false) ..
+                ",[MeterDiskUsageBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+            -- 硬盘可用空间仪表盘
+            SKIN:Bang("!SetOption", "MeterDiskFreeBar", "Shape2",
+                "Rectangle [MeterDiskFreeBarShape2X:],[MeterDiskFreeBarShape2Y:]," ..
+                CalcBarSize(DiskInfoTable.Free, DiskInfoTable.Capacity, DiskInfoTable.FreeBarSize,
+                    false) ..
+                ",[MeterDiskFreeBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
         end
-        DiskInfoTable.Used = CalcDiskUsed(DiskInfoTable.Drive)
-        DiskInfoTable.Free = CalcDiskFree(DiskInfoTable.Drive)
-        DiskInfoTable.Usage = CheckNaN(CalcPercent(DiskInfoTable.Capacity, DiskInfoTable.Used))
-        -- 硬盘使用率
-        SKIN:Bang("!SetVariable", "DiskUsage", DiskInfoTable.Usage)
-        -- 硬盘已用空间
-        SKIN:Bang("!SetVariable", "DiskUsed", UnitConvert(DiskInfoTable.Used))
-        -- 硬盘可用空间
-        SKIN:Bang("!SetVariable", "DiskFree", UnitConvert(DiskInfoTable.Free))
-        -- 硬盘使用率仪表盘
-        SKIN:Bang("!SetOption", "MeterDiskUsageBar", "Shape2",
-            "Rectangle [MeterDiskUsageBarShape2X:],[MeterDiskUsageBarShape2Y:]," ..
-            CalcBarSize(DiskInfoTable.Usage, 100, DiskInfoTable.UsageBarSize,
+
+        -- 硬盘温度添加导零
+        SKIN:Bang("!SetVariable", "DiskTemp",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureDiskTempValueRaw"):GetValue(), 2, 0))
+
+        -- 硬盘温度仪表盘
+        SKIN:Bang("!SetOption", "MeterDiskTempBar", "Shape2",
+            "Rectangle [MeterDiskTempBarShape2X:],[MeterDiskTempBarShape2Y:]," ..
+            CalcBarSize(SKIN:GetMeasure("MeasureDiskTempValueRaw"):GetValue(), DiskInfoTable.DiskTempCap,
+                DiskInfoTable.TempBarSize,
                 false) ..
-            ",[MeterDiskUsageBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
-        -- 硬盘可用空间仪表盘
-        SKIN:Bang("!SetOption", "MeterDiskFreeBar", "Shape2",
-            "Rectangle [MeterDiskFreeBarShape2X:],[MeterDiskFreeBarShape2Y:]," ..
-            CalcBarSize(DiskInfoTable.Free, DiskInfoTable.Capacity, DiskInfoTable.FreeBarSize,
-                false) ..
-            ",[MeterDiskFreeBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+            ",[MeterDiskTempBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
+
+        -- 主板VRM温度添加导零
+        SKIN:Bang("!SetVariable", "MoboVrmTemp",
+            AddLeadingZeros(SKIN:GetMeasure("MeasureMoboVrmTempValueRaw"):GetValue(), 2, 0))
+
+        -- 网络上行速率
+        SKIN:Bang("!SetVariable", "NetUPRate", NetUnitConvert(SKIN:GetMeasure("MeasureNetUPRateValueRaw"):GetValue()))
+
+        -- 网络下行速率
+        SKIN:Bang("!SetVariable", "NetDLRate", NetUnitConvert(SKIN:GetMeasure("MeasureNetDLRateValueRaw"):GetValue()))
     end
-
-    -- 硬盘温度添加导零
-    SKIN:Bang("!SetVariable", "DiskTemp", AddLeadingZeros(SKIN:GetMeasure("MeasureDiskTempValueRaw"):GetValue(), 2, 0))
-
-    -- 硬盘温度仪表盘
-    SKIN:Bang("!SetOption", "MeterDiskTempBar", "Shape2",
-        "Rectangle [MeterDiskTempBarShape2X:],[MeterDiskTempBarShape2Y:]," ..
-        CalcBarSize(SKIN:GetMeasure("MeasureDiskTempValueRaw"):GetValue(), DiskInfoTable.DiskTempCap,
-            DiskInfoTable.TempBarSize,
-            false) ..
-        ",[MeterDiskTempBarShape2H:] | Fill Color 44,130,190,255 | StrokeWidth 0")
-
-    -- 主板VRM温度添加导零
-    SKIN:Bang("!SetVariable", "MoboVrmTemp",
-        AddLeadingZeros(SKIN:GetMeasure("MeasureMoboVrmTempValueRaw"):GetValue(), 2, 0))
-
-    -- 网络上行速率
-    SKIN:Bang("!SetVariable", "NetUPRate", NetUnitConvert(SKIN:GetMeasure("MeasureNetUPRateValueRaw"):GetValue()))
-
-    -- 网络下行速率
-    SKIN:Bang("!SetVariable", "NetDLRate", NetUnitConvert(SKIN:GetMeasure("MeasureNetDLRateValueRaw"):GetValue()))
 end
 
 -- 向数字添加导零符
