@@ -280,34 +280,34 @@ ScaleFactor=1
 ScaleFactor=1.2
 ```
 
-  [1]: https://xcz.me/usr/uploads/2024/06/3770092562.png
+  [1]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/3770092562.png
   [2]: https://github.com/xiao-cheng-zi/MaterialDesign
   [3]: https://github.com/xiao-cheng-zi/MaterialDesign/releases/download/v1.0/MaterialDesign_v1.0.zip
   [4]: https://forums.aida64.com/profile/48674-thatmanonthemoon/
-  [5]: https://xcz.me/usr/uploads/2024/06/1866730957.png
-  [6]: https://xcz.me/usr/uploads/2024/06/1557877393.png
-  [7]: https://xcz.me/usr/uploads/2024/06/534932228.png
-  [8]: https://xcz.me/usr/uploads/2024/06/28836781.png
-  [9]: https://xcz.me/usr/uploads/2024/06/1685707739.png
-  [10]: https://xcz.me/usr/uploads/2024/06/2948421839.png
-  [11]: https://xcz.me/usr/uploads/2024/06/2363795026.png
-  [12]: https://xcz.me/usr/uploads/2024/06/1726987258.png
-  [13]: https://xcz.me/usr/uploads/2024/06/2316680445.png
-  [14]: https://xcz.me/usr/uploads/2024/06/1411933858.png
-  [15]: https://xcz.me/usr/uploads/2024/06/3968159416.png
-  [16]: https://xcz.me/usr/uploads/2024/06/899610709.png
-  [17]: https://xcz.me/usr/uploads/2024/06/2220887765.png
-  [18]: https://xcz.me/usr/uploads/2024/06/3139008184.png
-  [19]: https://xcz.me/usr/uploads/2024/06/2260140464.png
-  [20]: https://xcz.me/usr/uploads/2024/06/184794930.png
-  [21]: https://xcz.me/usr/uploads/2024/06/2093293440.png
-  [22]: https://xcz.me/usr/uploads/2024/06/3924551894.png
-  [23]: https://xcz.me/usr/uploads/2024/06/1708547721.png
-  [24]: https://xcz.me/usr/uploads/2024/06/3296763053.png
-  [25]: https://xcz.me/usr/uploads/2024/06/167974867.png
-  [26]: https://xcz.me/usr/uploads/2024/06/2629946273.png
-  [27]: https://xcz.me/usr/uploads/2024/06/2780117078.png
-  [28]: https://xcz.me/usr/uploads/2024/06/1859671146.png
-  [29]: https://xcz.me/usr/uploads/2024/06/2959788619.png
-  [30]: https://xcz.me/usr/uploads/2024/06/3240733456.png
-  [31]: https://xcz.me/usr/uploads/2024/06/937425507.png
+  [5]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1866730957.png
+  [6]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1557877393.png
+  [7]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/534932228.png
+  [8]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/28836781.png
+  [9]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1685707739.png
+  [10]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2948421839.png
+  [11]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2363795026.png
+  [12]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1726987258.png
+  [13]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2316680445.png
+  [14]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1411933858.png
+  [15]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/3968159416.png
+  [16]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/899610709.png
+  [17]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2220887765.png
+  [18]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/3139008184.png
+  [19]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2260140464.png
+  [20]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/184794930.png
+  [21]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2093293440.png
+  [22]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/3924551894.png
+  [23]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1708547721.png
+  [24]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/3296763053.png
+  [25]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/167974867.png
+  [26]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2629946273.png
+  [27]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2780117078.png
+  [28]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/1859671146.png
+  [29]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/2959788619.png
+  [30]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/3240733456.png
+  [31]: https://github.com/xiao-cheng-zi/MaterialDesign/blob/main/Images/937425507.png
